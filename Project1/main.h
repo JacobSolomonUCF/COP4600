@@ -9,17 +9,17 @@
 
 //Struct for proccess data
 struct process {
-  char* name;
+  char name[4];
   int arrival;
   int burst;
-}
+};
 
 struct testcase {
     int numOfProcesses;
     int runTime;
     char processType[4];
     int quantum;
-    process* processes;
+    struct process* processes;
 } testcase;
 
 

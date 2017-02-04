@@ -13,20 +13,23 @@ int main() {
 
 
     //TESTING OUTPUT
-    printf("Num Of Proccesses %d\nRun Time %d\nProcess Type %s\nQuantum %d\n\n", process.numOfProcesses,process.runTime,process.processType,process.quantum);
+    printf("Num Of Proccesses %d\nRun Time %d\nProcess Type %s\nQuantum %d\n\n", testcase.numOfProcesses,testcase.runTime,testcase.processType,testcase.quantum);
 
     return 0;
 }
 
 void processType(){
+    
+    
+    
     char *tmp = malloc(128);
     FILE * ifp = fopen("clean.out", "r");
-    int index = 0;
+    int index = 0, totalTime = 0;
     while(strcmp(tmp, "end") != 0){
         fscanf(ifp, "%s", tmp);
         if (strcmp(tmp, "processcount") == 0) {
             fscanf(ifp, "%d", &testcase.numOfProcesses);
-            testcase.processes = malloc(testcase.numOfProcesses * sizeof(process))
+            testcase.processes = malloc(testcase.numOfProcesses * sizeof(struct process));
         }
         if (strcmp(tmp, "runfor") == 0)
             fscanf(ifp, "%d", &testcase.runTime);
@@ -37,30 +40,29 @@ void processType(){
                 if(strcmp(tmp,"quantum") == 0)
                     fscanf(ifp, "%d", &testcase.quantum);
             }
-            fclose(ifp);
-            return;
+
         }
         if (strcmp(tmp, "process") == 0) {
-          fscanf(in, "%s", tmp);
-          fscanf(in, "%s", tmp);
-          strcpy(fc[index].processID, tmp);
-          fscanf(in, "%s", tmp);
+          fscanf(ifp, "%s", tmp);
+          fscanf(ifp, "%s", tmp);
+          strcpy(testcase.processes[index].name, tmp);
+          fscanf(ifp, "%s", tmp);
           if(strcmp(tmp, "arrival") == 0){
-            fscanf(in, "%d", &fc[index].arrivalTime);
+            fscanf(ifp, "%d", &testcase.processes[index].arrival);
 
           }
-          fscanf(in, "%s", tmp);
+          fscanf(ifp, "%s", tmp);
           if(strcmp(tmp, "burst") == 0){
-            fscanf(in, "%d", &fc[index].burstTime);
-            totalTime = totalTime + fc[index].burstTime;
+            fscanf(ifp, "%d", &testcase.processes[index].burst);
+            totalTime = totalTime + testcase.processes[index].burst;
           }
           index++;
         }
       }
-    }
+    
     fclose(ifp);
-    return;
-}
+    }
+
 
 void readIn(){
     FILE * ifp = fopen("processes.in", "r");
