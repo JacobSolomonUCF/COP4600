@@ -8,14 +8,20 @@
 #include "sjf.h"
 
 //Struct for proccess data
-typedef struct process{
+struct process {
+  char* name;
+  int arrival;
+  int burst;
+}
+
+struct testcase {
     int numOfProcesses;
     int runTime;
-    char processType[3];
+    char processType[4];
     int quantum;
-    
-}processInfo;
-processInfo process;
+    process* processes;
+} testcase;
+
 
 //Function Prototypes
 void readIn();
