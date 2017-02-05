@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 //Struct for proccess data
 struct process {
   char name[4];

@@ -22,7 +22,6 @@ int main() {
 }
 
 void processType(){
-
     char *tmp = malloc(128);
     FILE * ifp = fopen("clean.out", "r");
     int index = 0, totalTime = 0;
@@ -59,8 +58,8 @@ void processType(){
             fscanf(ifp, "%d", &testcase.processes[index].burst);
             totalTime = totalTime + testcase.processes[index].burst;
           }
-          testcase.processes[index].arrived = 0;
           testcase.processes[index].finished = 0;
+          testcase.processes[index].arrived = 0;
           testcase.processes[index].wait = 0;
           testcase.processes[index].turnaround = 0;
           index++;
