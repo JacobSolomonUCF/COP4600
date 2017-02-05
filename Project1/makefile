@@ -1,14 +1,11 @@
-main: main.o rr.o fcfs.o sjf.o
-	gcc -o main main.o rr.o fcfs.o sjf.o
+_OBJ = fcfs.o rr.o sjf.o
+OBJ = $(patsubst %, obj/%, $(_OBJ))
 
-main.o: main.c rr.h fcfs.h sjf.h
-	gcc -c main.c
+main: $(OBJ) obj/main.o
+	gcc -o $@ $^
 
-rr.o: rr.c rr.h
-	gcc -c rr.c
+obj/%.o: %.c
+	gcc -c $< -o $@
 
-fcfs.o: fcfs.c fcfs.h
-	gcc -c fcfs.c
-
-sjf.o: sjf.c sjf.h
-	gcc -c sjf.c
+obj/main.o: main.c
+	gcc -c $< -o $@
