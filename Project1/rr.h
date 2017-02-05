@@ -3,9 +3,7 @@
 
 #include <stdio.h>
 
-//Function Prototypes
-
-void rr();
-
+struct testcase;
+void rr(struct testcase);
 
 #endif
