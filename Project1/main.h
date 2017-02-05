@@ -3,15 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "rr.h"
-#include "fcfs.h"
-#include "sjf.h"
+
 
 //Struct for proccess data
 struct process {
   char name[4];
   int arrival;
   int burst;
+  int finished;
+  int arrived;
+  int wait;
+  int turnaround;
 };
 
 struct testcase {

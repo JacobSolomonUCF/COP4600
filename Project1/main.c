@@ -1,30 +1,33 @@
 #include "main.h"
+#include "rr.h"
+#include "sjf.h"
+#include "fcfs.h"
 
 int main() {
-
-    //Test for linking files can be removed.
-    rr();
-    sjf();
-    fcfs();
-
 
     readIn();
     processType();
 
-
-    //TESTING OUTPUT
-    printf("Num Of Proccesses %d\nRun Time %d\nProcess Type %s\nQuantum %d\n\n", testcase.numOfProcesses,testcase.runTime,testcase.processType,testcase.quantum);
+    if(strcmp(testcase.processType,"rr") == 0){
+        rr(testcase);
+    }
+    if(strcmp(testcase.processType,"sjf") == 0){
+        sjf(testcase);
+    }
+    if(strcmp(testcase.processType,"fcfs") == 0){
+        fcfs(testcase);
+    }
 
     return 0;
 }
 
 void processType(){
-    
-    
-    
+
     char *tmp = malloc(128);
     FILE * ifp = fopen("clean.out", "r");
     int index = 0, totalTime = 0;
+
+
     while(strcmp(tmp, "end") != 0){
         fscanf(ifp, "%s", tmp);
         if (strcmp(tmp, "processcount") == 0) {
@@ -56,10 +59,14 @@ void processType(){
             fscanf(ifp, "%d", &testcase.processes[index].burst);
             totalTime = totalTime + testcase.processes[index].burst;
           }
+          testcase.processes[index].arrived = 0;
+          testcase.processes[index].finished = 0;
+          testcase.processes[index].wait = 0;
+          testcase.processes[index].turnaround = 0;
           index++;
         }
       }
-    
+
     fclose(ifp);
     }
 
