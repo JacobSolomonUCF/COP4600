@@ -2,4 +2,4 @@
 **/*.out
 **/*.o
 **/main
-**/*processes.out
+**/processes.out
