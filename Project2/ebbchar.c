@@ -16,9 +16,11 @@
 #include <linux/kernel.h>         // Contains types, macros, functions for the kernel
 #include <linux/fs.h>             // Header for the Linux file system support
 #include <asm/uaccess.h>          // Required for the copy to user function
+#include <linux/string.h>
 #define  DEVICE_NAME "ebbchar"    ///< The device will appear at /dev/ebbchar using this value
 #define  CLASS_NAME  "ebb"        ///< The device class -- this is a character device driver
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 2048
+#define Max_Chars 8
 
 MODULE_LICENSE("GPL");
 // MODULE_AUTHOR("SDFSDF");
@@ -144,11 +146,29 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
  *  @param offset The offset if required
  */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset){
-   int sizeOfBuffer = strlen(message);
-   sprintf(message + sizeOfBuffer, "%s,", buffer);
-   bytesUsed += (int)len;
-   printk(KERN_INFO "EBBChar: Received %zu characters from the user\n", len);
-   return len;
+	int sizeOfBuffer = strlen(message);
+	if(len + bytesUsed > Max_Chars){
+		int remaining = Max_Chars - bytesUsed;
+		char sub[remaining];
+		printk(KERN_INFO "BITES LEFT %d : Message Len = %d , Message is %s \n", remaining, strlen(buffer), buffer);
+		int i = 0;
+		for(i = 0; i<remaining;i++){
+			sub[i] = buffer[i];
+		}
+		sub[remaining] = '\0';
+		printk(KERN_INFO "MESSAGE IS %s", sub);
+		sprintf(message + sizeOfBuffer, "%s,", sub);
+		bytesUsed += remaining;
+  		printk(KERN_INFO "EBBChar: Received %zu characters from the user\n", strlen(sub));
+
+
+	}else{
+
+  	sprintf(message + sizeOfBuffer, "%s,", buffer);
+   	bytesUsed += (int)len;
+  	printk(KERN_INFO "EBBChar: Received %zu characters from the user\n", len);
+  }
+   	return len;
 }
 
 /** @brief The device release function that is called whenever the device is closed/released by

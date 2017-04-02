@@ -63,13 +63,11 @@ int main() {
    
    write_to_driver(fd, "Tyler");
    write_to_driver(fd, "Jacob");
-   write_to_driver(fd, "dickbutt");
 
    read_from_driver(fd);
 
    write_to_driver(fd, "gerber");
 
-   read_from_driver(fd);
    read_from_driver(fd);
    read_from_driver(fd);
    
