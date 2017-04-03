@@ -49,16 +49,16 @@ static struct file_operations fops =
 };
 
 static int __init ebbchar_init(void){
-   printk(KERN_INFO "EBBChar: Initializing the EBBChar LKM\n");
+   printk(KERN_INFO "COP_Char: Initializing the EBBChar LKM\n");
 
    // Get a major numbers
    majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
    if (majorNumber<0)
    {
-      printk(KERN_ALERT "EBBChar failed to register a major number\n");
+      printk(KERN_ALERT "COP_Char failed to register a major number\n");
       return majorNumber;
    }
-   printk(KERN_INFO "EBBChar: registered correctly with major number %d\n", majorNumber);
+   printk(KERN_INFO "COP_Char: registered correctly with major number %d\n", majorNumber);
 
    // Register the device class
    ebbcharClass = class_create(THIS_MODULE, CLASS_NAME);
@@ -68,7 +68,7 @@ static int __init ebbchar_init(void){
       printk(KERN_ALERT "Failed to register device class\n");
       return PTR_ERR(ebbcharClass);
    }
-   printk(KERN_INFO "EBBChar: device class registered correctly\n");
+   printk(KERN_INFO "COP_Char: device class registered correctly\n");
 
    // Register device driver
    ebbcharDevice = device_create(ebbcharClass, NULL, MKDEV(majorNumber, 0), NULL, DEVICE_NAME);
@@ -79,13 +79,13 @@ static int __init ebbchar_init(void){
       printk(KERN_ALERT "Failed to create the device\n");
       return PTR_ERR(ebbcharDevice);
    }
-   printk(KERN_INFO "EBBChar: device class created correctly\n");
+   printk(KERN_INFO "COP_Char: device class created correctly\n");
    return 0;
 }
 
 static int dev_open(struct inode *inoded, struct file *filep)
 {
-   printk(KERN_INFO "SOME SHIT\n");
+   printk(KERN_INFO "--------------------COP_Char: Opened--------------------\n");
    return 0;
 }
 
@@ -94,7 +94,7 @@ static void __exit ebbchar_exit(void){
    class_unregister(ebbcharClass);
    class_destroy(ebbcharClass);
    unregister_chrdev(majorNumber, DEVICE_NAME);
-   printk(KERN_INFO "EBBChar: Goodbye from the LKM!\n");
+   printk(KERN_INFO "COP_Char: Goodbye from the LKM!\n");
 }
 
 /** @brief This function is called whenever device is being read from user space i.e. data is
@@ -128,11 +128,11 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
    bytesUsed -= comma_pos;
 
    if (error_count==0){            // if true then have success
-      printk(KERN_INFO "EBBChar: Sent %d characters to the user\n", comma_pos);
+      printk(KERN_INFO "COP_Char: Sent %d characters to the user\n", comma_pos);
       return (size_of_message=0);  // clear the position to the start and return 0
    }
    else {
-      printk(KERN_INFO "EBBChar: Failed to send %d characters to the user\n", error_count);
+      printk(KERN_INFO "COP_Char: Failed to send %d characters to the user\n", error_count);
       return -EFAULT;              // Failed -- return a bad address message (i.e. -14)
    }
 }
@@ -156,17 +156,16 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
 			sub[i] = buffer[i];
 		}
 		sub[remaining] = '\0';
-		printk(KERN_INFO "MESSAGE IS %s", sub);
 		sprintf(message + sizeOfBuffer, "%s,", sub);
 		bytesUsed += remaining;
-  		printk(KERN_INFO "EBBChar: Received %zu characters from the user\n", strlen(sub));
+  		printk(KERN_INFO "COP_Char: Received [%s], with a length of %zu \n", sub, strlen(sub));
 
 
 	}else{
 
   	sprintf(message + sizeOfBuffer, "%s,", buffer);
    	bytesUsed += (int)len;
-  	printk(KERN_INFO "EBBChar: Received %zu characters from the user\n", len);
+  	printk(KERN_INFO "COP_Char: Received [%s], with a length of %zu \n", buffer, len);
   }
    	return len;
 }
@@ -177,7 +176,7 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
  *  @param filep A pointer to a file object (defined in linux/fs.h)
  */
 static int dev_release(struct inode *inodep, struct file *filep){
-   printk(KERN_INFO "EBBChar: Device successfully closed\n");
+   printk(KERN_INFO "COP_Char: Device successfully closed\n");
    return 0;
 }
 
