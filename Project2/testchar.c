@@ -1,13 +1,10 @@
 /**
- * @file   testebbchar.c
- * @author Derek Molloy
- * @date   7 April 2015
- * @version 0.1
- * @brief  A Linux user space program that communicates with the ebbchar.c LKM. It passes a
- * string to the LKM and reads the response from the LKM. For this example to work the device
- * must be called /dev/ebbchar.
- * @see http://www.derekmolloy.ie/ for a full description and follow-up descriptions.
-*/
+ * File: testchar.c
+ * Authors: Tyler Petresky, Jacob Solomon, David Akridge
+ *
+ * NOTE: This test file was based on a file from http://derekmolloy.ie/writing-a-linux-kernel-module-part-2-a-character-device/
+ */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<errno.h>
@@ -15,8 +12,8 @@
 #include<string.h>
 #include<unistd.h>
 
-#define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
-static char receive[BUFFER_LENGTH];     ///< The receive buffer from the LKM
+#define BUFFER_LENGTH 1024
+static char receive[BUFFER_LENGTH];
 
 void clear_buf(char* buf)
 {
@@ -27,6 +24,7 @@ void clear_buf(char* buf)
 
 int write_to_driver(int fd, char* str)
 {
+   printf("Writing to driver: [%s]\n", str);
    int ret = write(fd, str, strlen(str));
    if (ret < 0){
       perror("Failed to write the message to the device.");
@@ -35,10 +33,10 @@ int write_to_driver(int fd, char* str)
    return 0;
 }
 
-int read_from_driver(int fd)
+int read_from_driver(int fd, int n)
 {
-   char receive[256] = {0};
-   int ret = read(fd, receive, 256);
+   char* receive = malloc(sizeof(char) * 256);
+   int ret = read(fd, receive, n);
 
    printf("The received message is: [%s]\n", receive);
 
@@ -47,7 +45,8 @@ int read_from_driver(int fd)
       return errno;
    }
    
-   clear_buf(receive);
+   free(receive);
+   receive = NULL;
    return 0;
 }
 
@@ -55,7 +54,7 @@ int main() {
    int ret, fd;
    char stringToSend[BUFFER_LENGTH];
    printf("Starting device test code example...\n");
-   fd = open("/dev/ebbchar", O_RDWR);             // Open the device with read/write access
+   fd = open("/dev/copchar", O_RDWR);
    if (fd < 0){
       perror("Failed to open the device...");
       return errno;
@@ -64,12 +63,15 @@ int main() {
    write_to_driver(fd, "Tyler");
    write_to_driver(fd, "Jacob");
 
-   read_from_driver(fd);
+   read_from_driver(fd, 2); //ty
 
    write_to_driver(fd, "gerber");
 
-   read_from_driver(fd);
-   read_from_driver(fd);
+   read_from_driver(fd, 3); //ler
+
+   read_from_driver(fd, 6); // jacobg
+   read_from_driver(fd, 8); // erberd
+   read_from_driver(fd, 3);
    
    printf("End of the program\n");
    return 0;

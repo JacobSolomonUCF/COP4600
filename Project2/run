@@ -1,0 +1,5 @@
+!#/bin/bash
+make
+sudo rmmod copchar.ko
+sudo insmod copchar.ko
+sudo ./test
