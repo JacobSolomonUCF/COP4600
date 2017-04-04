@@ -12,9 +12,9 @@
 #include <linux/fs.h>
 #include <asm/uaccess.h>
 #include <linux/string.h>
-#define  DEVICE_NAME "copchar"    
+#define  DEVICE_NAME "copchar"
 #define  CLASS_NAME  "cop"
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 1024
 
 MODULE_LICENSE("GPL");
 
