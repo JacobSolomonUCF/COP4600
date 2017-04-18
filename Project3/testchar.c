@@ -51,27 +51,34 @@ int read_from_driver(int fd, int n)
 }
 
 int main() {
-   int ret, fd;
+   int ret, fi, fo;
    char stringToSend[BUFFER_LENGTH];
    printf("Starting device test code example...\n");
-   fd = open("/dev/copchar", O_RDWR);
-   if (fd < 0){
-      perror("Failed to open the device...");
+   fi = open("/dev/copinput", O_RDWR);
+   fo = open("/dev/copoutput", O_RDWR);
+   if (fi < 0){
+      perror("Failed to open the input device...");
+      return errno;
+   }
+   if (fo < 0){
+      perror("Failed to open the output device...");
       return errno;
    }
    
-   write_to_driver(fd, "Tyler");
-   write_to_driver(fd, "Jacob");
+   write_to_driver(fi, "Tyler");
 
-   read_from_driver(fd, 2); //ty
+   fi = NULL;
+   // write_to_driver(fd, "Jacob");
 
-   write_to_driver(fd, "gerber");
+   read_from_driver(fo, 2); //ty
 
-   read_from_driver(fd, 3); //ler
+   // write_to_driver(fd, "gerber");
 
-   read_from_driver(fd, 6); // jacobg
-   read_from_driver(fd, 8); // erberd
-   read_from_driver(fd, 3);
+   // read_from_driver(fd, 3); //ler
+
+   // read_from_driver(fd, 6); // jacobg
+   // read_from_driver(fd, 8); // erberd
+   // read_from_driver(fd, 3);
    
    printf("End of the program\n");
    return 0;
