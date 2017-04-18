@@ -16,10 +16,11 @@
 #define  CLASS_NAME  "cop"
 #define BUFFER_SIZE 1024
 
+extern char shared_buffer[BUFFER_SIZE + 1] = {0}
+
 MODULE_LICENSE("GPL");
 
 static int    majorNumber;
-static char   message[BUFFER_SIZE + 1] = {0};
 static int    bytesUsed = 0;
 static struct class*  ebbcharClass  = NULL;
 static struct device* ebbcharDevice = NULL;
@@ -93,20 +94,20 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
    int bytesSent = 0;
    if (len > bytesUsed)
    {
-      error_count = copy_to_user(buffer, message, bytesUsed);
+      error_count = copy_to_user(buffer, shared_buffer, bytesUsed);
       buffer[bytesUsed] = '\0';
-      message[0] = '\0';
+      shared_buffer[0] = '\0';
       bytesSent = bytesUsed;
       bytesUsed = 0;
    }
    else
    {
-      error_count = copy_to_user(buffer, message, len);
+      error_count = copy_to_user(buffer, shared_buffer, len);
 
       int i = 0;
       for (i = len; i < bytesUsed; i++)
-         message[i - len] = message[i];
-      message[i - len] = '\0';
+         shared_buffer[i - len] = shared_buffer[i];
+      shared_buffer[i - len] = '\0';
       bytesUsed -= len;
       bytesSent = len;
    }
@@ -130,14 +131,14 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
       int i = 0;
 
       for (; i < bytesAvailable; i++)
-         message[bytesUsed + i] = buffer[i];
+         shared_buffer[bytesUsed + i] = buffer[i];
       bytesUsed += bytesAvailable;
 
-      message[bytesUsed] = '\0';
+      shared_buffer[bytesUsed] = '\0';
    }
    else
    {
-      sprintf(message + bytesUsed, "%s", buffer);
+      sprintf(shared_buffer + bytesUsed, "%s", buffer);
       bytesUsed += len;
    }
 
