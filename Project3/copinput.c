@@ -36,26 +36,26 @@ static struct file_operations fops =
 
 static int __init ebbchar_init(void)
 {
-   	printk(KERN_INFO "Initializing the Driver\n");
+   	printk(KERN_INFO "INPUT: Initializing the Driver\n");
 
    	// Get a major numbers
    	majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
    	if (majorNumber<0)
    	{
-      	printk(KERN_ALERT "Failed to register a major number\n");
+      	printk(KERN_ALERT "INPUT: Failed to register a major number\n");
       	return majorNumber;
    	}
-   	printk(KERN_INFO "Registered correctly with major number %d\n", majorNumber);
+   	printk(KERN_INFO "INPUT: Registered correctly with major number %d\n", majorNumber);
 
    	// Register the device class
    	ebbcharClass = class_create(THIS_MODULE, CLASS_NAME);
    	if (IS_ERR(ebbcharClass))
    	{
       	unregister_chrdev(majorNumber, DEVICE_NAME);
-      	printk(KERN_ALERT "Failed to register device class\n");
+      	printk(KERN_ALERT "INPUT: Failed to register device class\n");
       	return PTR_ERR(ebbcharClass);
    	}
-   	printk(KERN_INFO "Device class registered correctly\n");
+   	printk(KERN_INFO "INPUT: Device class registered correctly\n");
 
    	// Register device driver
    	ebbcharDevice = device_create(ebbcharClass, NULL, MKDEV(majorNumber, 0), NULL, DEVICE_NAME);
@@ -63,10 +63,10 @@ static int __init ebbchar_init(void)
    	{
       	class_destroy(ebbcharClass);
       	unregister_chrdev(majorNumber, DEVICE_NAME);
-      	printk(KERN_ALERT "Failed to create the device class\n");
+      	printk(KERN_ALERT "INPUT: Failed to create the device class\n");
       	return PTR_ERR(ebbcharDevice);
    	}
-   	printk(KERN_INFO "Device class created correctly\n");
+   	printk(KERN_INFO "INPUT: Device class created correctly\n");
 
    	mutex_init(&ebbchar_mutex);
    	return 0;
@@ -76,10 +76,10 @@ static int dev_open(struct inode *inoded, struct file *filep)
 {
    	if (!mutex_trylock(&ebbchar_mutex))
    	{
-   		printk(KERN_ALERT "COPInput: Device in use by another process");
+   		printk(KERN_ALERT "INPUT: Device in use by another process");
    		return -EBUSY;
    	}
-   	printk(KERN_INFO "-------------------- Opened Driver --------------------\n");
+   	printk(KERN_INFO "--------------------INPUT: Opened Driver --------------------\n");
    	return 0;
 }
 
@@ -90,7 +90,7 @@ static void __exit ebbchar_exit(void)
    	class_destroy(ebbcharClass);
    	unregister_chrdev(majorNumber, DEVICE_NAME);
    	mutex_unlock(&ebbchar_mutex);
-   	printk(KERN_INFO "Closing the driver\n");
+   	printk(KERN_INFO "INPUT: Closing the driver\n");
 }
 
 // Write from the user into the driver.
@@ -113,7 +113,7 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
       	bytesUsed += len;
    	}
 
-   	printk(KERN_INFO "Wrote \'%s\' to buffer", buffer);
+   	printk(KERN_INFO "INPUT: Current buffer is \'%s\'", shared_buffer);
 
    	return len;
 }
@@ -121,7 +121,7 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
 // Release the driver
 static int dev_release(struct inode *inodep, struct file *filep)
 {
-   	printk(KERN_INFO "Device successfully closed\n");
+   	printk(KERN_INFO "INPUT: Device successfully closed\n");
    	return 0;
 }
 

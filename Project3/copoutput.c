@@ -31,26 +31,26 @@ static struct file_operations fops =
 };
 
 static int __init ebbchar_init(void){
-   printk(KERN_INFO "Initializing the Driver\n");
+   printk(KERN_INFO "OUTPUT: Initializing the Driver\n");
 
    // Get a major numbers
    majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
    if (majorNumber<0)
    {
-      printk(KERN_ALERT "Failed to register a major number\n");
+      printk(KERN_ALERT "OUTPUT: Failed to register a major number\n");
       return majorNumber;
    }
-   printk(KERN_INFO "Registered correctly with major number %d\n", majorNumber);
+   printk(KERN_INFO "OUTPUT: Registered correctly with major number %d\n", majorNumber);
 
    // Register the device class
    ebbcharClass = class_create(THIS_MODULE, CLASS_NAME);
    if (IS_ERR(ebbcharClass))
    {
       unregister_chrdev(majorNumber, DEVICE_NAME);
-      printk(KERN_ALERT "Failed to register device class\n");
+      printk(KERN_ALERT "OUTPUT: Failed to register device class\n");
       return PTR_ERR(ebbcharClass);
    }
-   printk(KERN_INFO "Device class registered correctly\n");
+   printk(KERN_INFO "OUTPUT: Device class registered correctly\n");
 
    // Register device driver
    ebbcharDevice = device_create(ebbcharClass, NULL, MKDEV(majorNumber, 0), NULL, DEVICE_NAME);
@@ -58,11 +58,11 @@ static int __init ebbchar_init(void){
    {
       class_destroy(ebbcharClass);
       unregister_chrdev(majorNumber, DEVICE_NAME);
-      printk(KERN_ALERT "Failed to create the device class\n");
+      printk(KERN_ALERT "OUTPUT: Failed to create the device class\n");
       return PTR_ERR(ebbcharDevice);
    }
    mutex_init(&output_mutex);
-   printk(KERN_INFO "Device class created correctly\n");
+   printk(KERN_INFO "OUTPUT: Device class created correctly\n");
    return 0;
 }
 
@@ -70,10 +70,10 @@ static int dev_open(struct inode *inoded, struct file *filep)
 {
 	if(!mutex_trylock(&output_mutex)){    /// Try to acquire the mutex (i.e., put the lock on/down)
                                           /// returns 1 if successful and 0 if there is contention
-      printk(KERN_ALERT "Device in use by another process");
+      printk(KERN_ALERT "OUTPUT: Device in use by another process");
       return -EBUSY;
    }
-   	printk(KERN_INFO "-------------------- Opened Driver --------------------\n");
+   	printk(KERN_INFO "--------------------OUTPUT: Opened Driver --------------------\n");
    	return 0;
 }
 
@@ -83,13 +83,12 @@ static void __exit ebbchar_exit(void){
    class_unregister(ebbcharClass);
    class_destroy(ebbcharClass);
    unregister_chrdev(majorNumber, DEVICE_NAME);
-   printk(KERN_INFO "Closing the driver\n");
+   printk(KERN_INFO "OUTPUT: Closing the driver\n");
 }
 // Read bytes from the driver into the user space
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
    int bytesUsed = strlen(shared_buffer);
-   printk(KERN_INFO "MESS %d: \n", bytesUsed);
    int error_count = 0;
    int bytesSent = 0;
 
@@ -101,12 +100,12 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
       shared_buffer[0] = '\0';
       bytesSent = bytesUsed;
       bytesUsed = 0;
-      printk(KERN_INFO "Buffer1 %s: \n", buffer);
    }
    else
    {
       error_count = copy_to_user(buffer, shared_buffer, len);
-      printk(KERN_INFO "Buffer %s: \n", buffer);
+      buffer[len] = '\0';
+      printk(KERN_INFO "OUTPUT BUFFER: %s", buffer);
 
       int i = 0;
       for (i = len; i < bytesUsed; i++)
@@ -117,17 +116,17 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
    }
    if (error_count == 0)
    {
-      printk(KERN_INFO "Sent %d characters to the user\n", bytesSent);
+      printk(KERN_INFO "OUTPUT: Sent %d characters to the user\n", bytesSent);
       return 0;
    }
    else {
-      printk(KERN_INFO "Failed to send %d characters to the user\n", error_count);
+      printk(KERN_INFO "OUTPUT: Failed to send %d characters to the user\n", error_count);
       return -EFAULT;
    }
 }
 static int dev_release(struct inode *inodep, struct file *filep){
    mutex_unlock(&output_mutex); 
-   printk(KERN_INFO "Device successfully closed\n");
+   printk(KERN_INFO "OUTPUT: Device successfully closed\n");
    return 0;
 }
 

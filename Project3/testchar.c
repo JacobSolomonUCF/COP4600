@@ -66,20 +66,17 @@ int main() {
    }
    
    write_to_driver(fi, "Tyler");
+   write_to_driver(fi, "JACOB");
 
-   //fi = NULL;
-   // write_to_driver(fd, "Jacob");
+   read_from_driver(fo, 5);
+   read_from_driver(fo, 5); 
 
-   read_from_driver(fo, 2); //ty
+   write_to_driver(fi, "gerber");
 
-   // write_to_driver(fd, "gerber");
+   read_from_driver(fo, 3);
 
-   // read_from_driver(fd, 3); //ler
+   read_from_driver(fo, 6);
 
-   // read_from_driver(fd, 6); // jacobg
-   // read_from_driver(fd, 8); // erberd
-   // read_from_driver(fd, 3);
-   
    printf("End of the program\n");
    return 0;
 }
