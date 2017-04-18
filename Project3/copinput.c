@@ -20,7 +20,6 @@ MODULE_LICENSE("GPL");
 static DEFINE_MUTEX(ebbchar_mutex);
 
 static int    majorNumber;
-static int    bytesUsed = 0;
 static struct class*  ebbcharClass  = NULL;
 static struct device* ebbcharDevice = NULL;
 
@@ -96,6 +95,7 @@ static void __exit ebbchar_exit(void)
 
 // Write from the user into the driver.
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset) {
+	int bytesUsed = strlen(shared_buffer);
    	if (len + bytesUsed >= BUFFER_SIZE)
    	{
       	int bytesAvailable = BUFFER_SIZE - bytesUsed;

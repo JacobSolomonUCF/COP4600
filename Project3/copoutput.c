@@ -16,7 +16,6 @@ MODULE_LICENSE("GPL");
 static DEFINE_MUTEX(output_mutex);
 
 static int    majorNumber;
-static int    bytesUsed = 0;
 static struct class*  ebbcharClass  = NULL;
 static struct device* ebbcharDevice = NULL;
 
@@ -89,6 +88,7 @@ static void __exit ebbchar_exit(void){
 // Read bytes from the driver into the user space
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
+   int bytesUsed = strlen(shared_buffer);
    printk(KERN_INFO "MESS %d: \n", bytesUsed);
    int error_count = 0;
    int bytesSent = 0;
