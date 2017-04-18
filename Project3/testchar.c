@@ -67,7 +67,7 @@ int main() {
    
    write_to_driver(fi, "Tyler");
 
-   fi = NULL;
+   //fi = NULL;
    // write_to_driver(fd, "Jacob");
 
    read_from_driver(fo, 2); //ty

@@ -1,9 +1,9 @@
 !#/bin/bash
 clear && make
-sudo rmmod copinput.ko
-sudo rmmod copoutput.ko
-
 sudo insmod copinput.ko
 sudo insmod copoutput.ko
 
 sudo ./test
+
+sudo rmmod copoutput.ko
+sudo rmmod copinput.ko

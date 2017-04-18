@@ -89,8 +89,11 @@ static void __exit ebbchar_exit(void){
 // Read bytes from the driver into the user space
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
+   printk(KERN_INFO "MESS %d: \n", bytesUsed);
    int error_count = 0;
    int bytesSent = 0;
+
+   bytesUsed = strlen(shared_buffer);
    if (len > bytesUsed)
    {
       error_count = copy_to_user(buffer, shared_buffer, bytesUsed);
@@ -98,10 +101,12 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
       shared_buffer[0] = '\0';
       bytesSent = bytesUsed;
       bytesUsed = 0;
+      printk(KERN_INFO "Buffer1 %s: \n", buffer);
    }
    else
    {
       error_count = copy_to_user(buffer, shared_buffer, len);
+      printk(KERN_INFO "Buffer %s: \n", buffer);
 
       int i = 0;
       for (i = len; i < bytesUsed; i++)
@@ -110,7 +115,6 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
       bytesUsed -= len;
       bytesSent = len;
    }
-
    if (error_count == 0)
    {
       printk(KERN_INFO "Sent %d characters to the user\n", bytesSent);
